@@ -1,13 +1,14 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 16:30:23
- * @LastEditTime: 2022-09-22 18:02:13
+ * @LastEditTime: 2022-09-23 18:14:45
  * @Description: 
  */
 
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:lost_ark/home_page.dart';
+import 'package:lost_ark/provider/bingo_provider/bingo_provider.dart';
 import 'package:lost_ark/provider/engraved_provider/engraved_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +18,8 @@ import 'provider/menuCounter.dart';
 void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => MenuCounter()),
-    ChangeNotifierProvider(create: (context) => EngravedModel())
+    ChangeNotifierProvider(create: (context) => EngravedModel()),
+    ChangeNotifierProvider(create: (context) => BingoProvider())
   ], child: MyApp()));
   doWhenWindowReady(() {
     const initialSize = Size(900, 800);

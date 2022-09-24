@@ -1,12 +1,13 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 16:59:39
- * @LastEditTime: 2022-09-22 17:54:25
+ * @LastEditTime: 2022-09-23 17:13:26
  * @Description: 
  */
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:lost_ark/common/my_drawer.dart';
+import 'package:lost_ark/page/clown_bingo/clown_bingo_page.dart';
 import 'package:lost_ark/page/power_stone/power_stone.dart';
 import 'package:provider/provider.dart';
 
@@ -32,7 +33,7 @@ class _HomePageState extends State<HomePage> {
     List<PageModel> titleArr = [
       PageModel(title: "配铭刻", page: EngravedPage()),
       PageModel(title: "敲石头", page: PowerStone()),
-      PageModel(title: "小丑bingo", page: PowerStone())
+      PageModel(title: "小丑bingo", page: ClownBingoPage())
     ];
     return Scaffold(
       appBar: PreferredSize(
