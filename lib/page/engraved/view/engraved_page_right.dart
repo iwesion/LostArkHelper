@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-20 16:29:18
- * @LastEditTime: 2022-09-23 15:54:48
+ * @LastEditTime: 2022-09-26 10:54:53
  * @Description: 
  */
 import 'package:flutter/foundation.dart';
@@ -137,7 +137,7 @@ class _EngravePageRightViewState extends State<EngravePageRightView> {
                               List list = index != 5
                                   ? index == 6
                                       ? [3, 6, 9, 12]
-                                      : [3, 4, 5]
+                                      : [3, 4, 5, 6]
                                   : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
                               return MyDialog(
                                 list: list,
@@ -171,7 +171,7 @@ class _EngravePageRightViewState extends State<EngravePageRightView> {
                               List list = index != 5
                                   ? index == 6
                                       ? [3, 6, 9, 12]
-                                      : [3, 4, 5]
+                                      : [3, 4, 5, 6]
                                   : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
                               return MyDialog(
                                 list: list,

@@ -1,9 +1,11 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 18:00:26
- * @LastEditTime: 2022-09-19 09:24:41
+ * @LastEditTime: 2022-09-27 10:14:29
  * @Description: 
  */
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 class PowerStone extends StatefulWidget {
@@ -16,6 +18,16 @@ class PowerStone extends StatefulWidget {
 class _PowerStoneState extends State<PowerStone> {
   @override
   Widget build(BuildContext context) {
+    List<List<bool>> bb = [
+      [false],
+      [false]
+    ];
+
+    List a = [];
+    a = json.decode(json.encode(bb));
+    a[0][0] = true;
+
+    print("2------------${bb[0][0]}");
     return Scaffold(
       body: Container(),
     );

@@ -1,12 +1,15 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-23 17:12:26
- * @LastEditTime: 2022-09-24 17:37:36
+ * @LastEditTime: 2022-09-26 18:30:04
  * @Description: 
  */
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../provider/bingo_provider/bingo_provider.dart';
 
 class ClownBingoPage extends StatefulWidget {
   const ClownBingoPage({Key? key}) : super(key: key);
@@ -18,7 +21,9 @@ class ClownBingoPage extends StatefulWidget {
 class _ClownBingoPageState extends State<ClownBingoPage> {
   @override
   Widget build(BuildContext context) {
-    print([1, 3, 4, 4].map((e) => e > 2));
+    BingoProvider watchmodel = context.watch<BingoProvider>();
+    BingoProvider readmodel = context.read<BingoProvider>();
+
     return Scaffold(
       body: Row(
         children: [
@@ -32,8 +37,16 @@ class _ClownBingoPageState extends State<ClownBingoPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      TextButton(onPressed: () {}, child: Text("重置")),
-                      TextButton(onPressed: () {}, child: Text("前进")),
+                      TextButton(
+                          onPressed: () {
+                            readmodel.resetBingo();
+                          },
+                          child: Text("重置")),
+                      TextButton(
+                          onPressed: () {
+                            readmodel.cancleBingo();
+                          },
+                          child: Text("后退")),
                     ],
                   ),
                 ),
@@ -43,9 +56,11 @@ class _ClownBingoPageState extends State<ClownBingoPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Checkbox(
-                          value: false,
+                          value: watchmodel.isInanna,
                           activeColor: Colors.red,
-                          onChanged: (b) {}),
+                          onChanged: (b) {
+                            readmodel.handleInanna(b!);
+                          }),
                       Text("使用伊安娜"),
                     ],
                   ),
@@ -54,9 +69,11 @@ class _ClownBingoPageState extends State<ClownBingoPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Checkbox(
-                        value: false,
+                        value: watchmodel.isHell,
                         activeColor: Colors.red,
-                        onChanged: (b) {}),
+                        onChanged: (b) {
+                          readmodel.handleHell(b!);
+                        }),
                     Text("地狱难度"),
                   ],
                 ),
@@ -67,14 +84,18 @@ class _ClownBingoPageState extends State<ClownBingoPage> {
                     children: [
                       Text("炸弹放在骷髅的优先级(越小越好)"),
                       Slider(
-                        value: 3,
-                        onChanged: (val) {},
+                        divisions: 4,
+                        value: watchmodel.preferSkull.toDouble(),
+                        onChanged: (val) {
+                          readmodel.handlePreferSkull(val);
+                        },
                         max: 5,
                         min: 1,
                       ),
                     ],
                   ),
-                )
+                ),
+                Text(watchmodel.preferSkull.toString())
               ],
             ),
           ),
@@ -83,7 +104,23 @@ class _ClownBingoPageState extends State<ClownBingoPage> {
             width: 600,
             child: Column(
               children: [
-                Container(height: 100, child: Center(child: Text("请放置xx炸弹"))),
+                Column(
+                  children: [
+                    Container(
+                        height: 50,
+                        child: Center(
+                            child: Text(watchmodel.round < 2
+                                ? "请先放置初始炸弹"
+                                : "请放置${watchmodel.round - 1}炸弹"))),
+                    Container(
+                        height: 50,
+                        child: Center(
+                            child: Text(
+                          watchmodel.warnMsg,
+                          style: TextStyle(color: Colors.red),
+                        ))),
+                  ],
+                ),
                 Expanded(
                   child: Center(
                     child: Transform.rotate(
@@ -98,28 +135,30 @@ class _ClownBingoPageState extends State<ClownBingoPage> {
                                   childAspectRatio: 1.0 //宽高比为1时，子widget
                                   ),
                           itemBuilder: (context, index) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    alignment: Alignment.center,
-                                    opacity: 0.8,
-                                    image: AssetImage('images/bingo/skull.png'),
-                                  )),
-                              margin: EdgeInsets.all(4),
-                              child: Center(
-                                child: Transform.rotate(
-                                    angle: -pi / 4,
-                                    child: Container(
-                                      child: Text(
-                                        "${index ~/ 5 + 1} -${index % 5 + 1}",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green),
-                                      ),
-                                    )),
+                            return GestureDetector(
+                              onTap: () {
+                                readmodel.clickBingo(index ~/ 5, index % 5);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color:
+                                        watchmodel.boxBg(index ~/ 5, index % 5),
+                                    image: watchmodel.boxBgImg(
+                                        index ~/ 5, index % 5)),
+                                margin: EdgeInsets.all(4),
+                                child: Center(
+                                  child: Transform.rotate(
+                                      angle: -pi / 4,
+                                      child: Container(
+                                        child: Text(
+                                          "${index ~/ 5 + 1} -${index % 5 + 1}",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green),
+                                        ),
+                                      )),
+                                ),
                               ),
                             );
                           },
