@@ -1,25 +1,38 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-23 18:13:07
- * @LastEditTime: 2022-09-26 16:46:11
+ * @LastEditTime: 2022-09-29 11:42:46
  * @Description: 
  */
 
 import 'dart:math';
-
+import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class Xy {
+  ///纵轴
   List<bool> col;
+
+  ///横轴上
   List<bool> row;
+
+  ///12-6点方向
   bool diS;
+
+  ///9-3点方向
   bool diD;
   Xy(
       {required this.row,
       required this.col,
       required this.diD,
       required this.diS});
+  static bool isEqual(Xy a, Xy b) {
+    return listEquals(a.col, b.col) &&
+        listEquals(a.row, b.row) &&
+        a.diS == b.diS &&
+        a.diD == b.diD;
+  }
 }
 
 class Score {
@@ -70,23 +83,15 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
         .toList();
   }
 
-  List<List<bool>> check = [
-    [false, false, false, false, false],
-    [false, true, false, false, false],
-    [false, false, false, false, false],
-    [false, false, false, false, false],
-    [false, false, false, false, false],
-  ];
-  List isc = [
-    [2, 2, 2, 2, 0.5],
-    [2, 20, 10, 2, 0.5],
-    [2, 10, 7, 2, 0.5],
-    [2, 2, 2, 2, 0.5],
-    [0.5, 0.5, 0.5, 0.5, 0.5],
-  ];
-
   ///检查bingo（Xy）
   Xy checkBingo(List<List<bool>> a) {
+    var diS = true;
+    var diD = true;
+    for (var i = 0; i < a.length; i++) {
+      diS = diS && a[i][i];
+      diD = diD && a[i][4 - i];
+    }
+
     return Xy(
         row: a
             .map((x) => x.reduce((value, element) => value && element))
@@ -94,8 +99,8 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
         col: transM(a)
             .map((e) => e.reduce((value, element) => value && element))
             .toList(),
-        diD: false,
-        diS: false);
+        diD: diD,
+        diS: diS);
   }
 
   ///判断是否为红色炸弹
@@ -130,7 +135,6 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
       return 0;
     }
 
-    isSk(x, y);
     return isSk(x + 1, y + 1) +
         isSk(x + 1, y) +
         isSk(x + 1, y - 1) +
@@ -148,12 +152,14 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
     return b[hellPos[0]][hellPos[1]];
   }
 
+  // **
   ///bingo的位置
+  ///b当前棋盘，al为棋子位置[[1,1]]
   List<List<bool>> placeBingo(List<List<bool>> b, List<List<int>> al) {
-    Xy nowBingo;
-    List<List<bool>> res = List.from(b);
+    final res = copyLLBist(b);
+
+    Xy nowBingo = checkBingo(res);
     for (var a in al) {
-      nowBingo = checkBingo(res);
       for (var d in [
         [0, 0],
         [0, 1],
@@ -173,9 +179,26 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
     return res;
   }
 
-  List<num> scorePlace(b, List<List<int>> bfsq) {
+  List<num> scorePlace(b) {
     List<num> res = [0, 0, 0, 0];
     Xy nowBingo = checkBingo(b);
+    var check = [
+      [false, false, false, false, false],
+      [false, true, false, false, false],
+      [false, false, false, false, false],
+      [false, false, false, false, false],
+      [false, false, false, false, false],
+    ];
+    var bfsq = [
+      [1, 1]
+    ];
+    const isc = [
+      [2, 2, 2, 2, 0.5],
+      [2, 20, 10, 2, 0.5],
+      [2, 10, 7, 2, 0.5],
+      [2, 2, 2, 2, 0.5],
+      [0.5, 0.5, 0.5, 0.5, 0.5],
+    ];
     for (var s = 0; s < bfsq.length; s++) {
       int tx = bfsq[s][0];
       int ty = bfsq[s][1];
@@ -183,7 +206,6 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
       if (!isSkull(b, tx, ty)) {
         res[1] = res[1] + isc[tx][ty];
       }
-      ;
       if (!isRed(nowBingo, tx, ty)) {
         for (var d in [
           [1, 0],
@@ -196,9 +218,7 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
           if (0 <= nx && nx < 5 && 0 <= ny && ny < 5) {
             if ((!check[nx][ny]) && (!isRed(nowBingo, nx, ny))) {
               check[nx][ny] = true;
-              List<List<int>> newBfsq = bfsq;
-              newBfsq.add([nx, ny]);
-              scorePlace(b, newBfsq);
+              bfsq.add([nx, ny]);
             }
           }
         }
@@ -213,10 +233,10 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
     return res;
   }
 
-  List<Score> scoreThird(al) {
+  List<Score> scoreThird(List<List<int>> al) {
     List<Score> res = [];
-    // 3빙고, 빨강, 가용, 빈가용, 해골, 총, 총빈
-    List<List<bool>> nowPlace = placeBingo(bingo[round.toInt()], al);
+
+    List<List<bool>> nowPlace = placeBingo(bingo[round], al);
     Xy nowBingo = checkBingo(nowPlace);
     for (var i = 0; i < 5; i++) {
       for (var j = 0; j < 5; j++) {
@@ -226,20 +246,22 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
         ]);
         Xy testBingo = checkBingo(testPlace);
         if (!isHellOver(testPlace)) {
-          if (nowBingo.toString() != testBingo.toString()) score[0] = 1;
+          if (!Xy.isEqual(nowBingo, testBingo)) {
+            score[0] = 1;
+          }
           if (!isRed(nowBingo, i, j)) score[1] = 1;
           if (!isSkull(nowPlace, i, j)) score[4] = 1;
           if (isIsolate(nowPlace, i, j) == 8) score[4] = 0;
-          List<num> sp = scorePlace(testPlace, [
-            [1, 1]
-          ]);
+          List<num> sp = scorePlace(testPlace);
           score[2] = sp[0];
           score[3] = sp[1];
           score[5] = sp[2];
           score[6] = sp[3];
         }
         num sc = 0;
-        for (var k = 0; k < 7; k++) sc += score[k] * scoreWeight[k];
+        for (var k = 0; k < 7; k++) {
+          sc += score[k] * scoreWeight[k];
+        }
         res.add(Score(score: sc, x: i, y: j));
       }
     }
@@ -252,33 +274,35 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
     Xy nowBingo = checkBingo(nowPlace);
     for (var i = 0; i < 5; i++) {
       for (var j = 0; j < 5; j++) {
-        List<num> score = [0, 0, 0, 0, 0, 0, 0];
-
+        List<num> score = [0, 0, 0, 0, 0, 0];
         List<List<bool>> testPlace = placeBingo(nowPlace, [
           [i, j]
         ]);
-        // if (!isHellOver(testPlace)) {
-        //   if (!isRed(nowBingo, i, j)) score[0] = 1;
-        //   if (!isSkull(nowPlace, i, j)) score[3] = 1;
-        //   if (isIsolate(nowPlace, i, j) == 8) score[3] = 0;
-        //   List<num> sp = scorePlace(testPlace);
-        //   score[1] = sp[0];
-        //   score[2] = sp[1];
-        //   score[4] = sp[2];
-        //   score[5] = sp[3];
-        // }
-        // num sc = 0;
-        // for (var k = 0; k < 7; k++) sc += score[k] * scoreWeight[k];
+        num scThird = -1;
+        if (!isHellOver(testPlace)) {
+          if (!isRed(nowBingo, i, j)) score[0] = 1;
+          if (!isSkull(nowPlace, i, j)) score[3] = 1;
+          if (isIsolate(nowPlace, i, j) == 8) score[3] = 0;
+          List<num> sp = scorePlace(testPlace);
+          score[1] = sp[0];
+          score[2] = sp[1];
+          score[4] = sp[2];
+          score[5] = sp[3];
+          scThird = scoreThird([
+            ...al,
+            [i, j]
+          ])
+              .reduce((value, element) =>
+                  value.score > element.score ? value : element)
+              .score;
+        }
+        num sc = 0;
+        for (var k = 0; k < 6; k++) {
+          sc += score[k] * scoreWeight[k + 1];
+        }
+        scThird = isHellOver(testPlace) ? 0 : scThird;
 
-        // num maxScore = 0;
-        // scoreThird([
-        //   ...al,
-        //   [i, j]
-        // ]).forEach((element) {
-        //   max(element.score, maxScore);
-        // });
-        // num scThird = isHellOver(testPlace) ? 0 : maxScore;
-        // res.add(Score(x: i, y: j, score: sc + scThird));
+        res.add(Score(x: i, y: j, score: sc + scThird));
       }
     }
     return res;
@@ -286,12 +310,12 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
 
   List<Score> scoreFirst() {
     List<Score> res = [];
-    // 빨강, 가용, 빈가용, 해골, 총, 총빈
-    List<List<bool>> nowPlace = bingo[round];
+    final nowPlace = bingo[round];
     Xy nowBingo = checkBingo(nowPlace);
+    num scSecond = -1;
     for (var i = 0; i < 5; i++) {
       for (var j = 0; j < 5; j++) {
-        List<num> score = [0, 0, 0, 0, 0, 0, 0];
+        List<num> score = [0, 0, 0, 0, 0, 0];
         List<List<bool>> testPlace = placeBingo(nowPlace, [
           [i, j]
         ]);
@@ -299,23 +323,23 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
           if (!isRed(nowBingo, i, j)) score[0] = 1;
           if (!isSkull(nowPlace, i, j)) score[3] = 1;
           if (isIsolate(nowPlace, i, j) == 8) score[3] = 0;
-          List<num> sp = scorePlace(testPlace, [
-            [1, 1]
-          ]);
+          List<num> sp = scorePlace(testPlace);
           score[1] = sp[0];
           score[2] = sp[1];
           score[4] = sp[2];
           score[5] = sp[3];
+          scSecond = scoreSecond([
+            [i, j]
+          ])
+              .reduce((value, element) =>
+                  value.score > element.score ? value : element)
+              .score;
         }
         num sc = 0;
-        for (var k = 0; k < 6; k++) sc += score[k] * scoreWeight[k + 1];
-        num scSecond = 0;
-        scoreThird([
-          [i, j]
-        ]).forEach((element) {
-          max(element.score, scSecond);
-        });
-
+        for (var k = 0; k < 6; k++) {
+          sc += score[k] * scoreWeight[k + 1];
+        }
+        scSecond = isHellOver(testPlace) ? 0 : scSecond;
         res.add(Score(x: i, y: j, score: sc + scSecond));
       }
     }
@@ -329,54 +353,53 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
     List<Score> score = [];
 
     if (round % 3 == 2) {
-      // score = scoreFirst();
+      score = scoreFirst();
     } else if (round % 3 == 0) {
-      // score = scoreSecond([]);
+      score = scoreSecond([]);
     } else {
-      // score = scoreThird([]);
+      score = scoreThird([]);
     }
-    // if (!isInanna) {
-    //   score = score.where((element) => element.score > 1e10).toList();
-    // }
+    if (!isInanna) {
+      score = score.where((element) => element.score >= 1e10).toList();
+    }
 
-    // if (isInanna) {
-    //   score.sort(((x, y) => ((y.score % 1e10) - (x.score % 1e10)).toInt()));
-    // } else {
-    //   score.sort((x, y) => (y.score - x.score).toInt());
-    // }
+    if (isInanna) {
+      score.sort(((x, y) => ((y.score % 1e10) - (x.score % 1e10)).toInt()));
+    } else {
+      score.sort((x, y) => (y.score - x.score).toInt());
+    }
 
-    // if (score.isNotEmpty) res.add([score[0].x, score[0].y]);
-    // if (score.length > 1) res.add([score[1].x, score[1].y]);
-
-    // if (score.length > 2) {
-    //   if (isSkull(bingo[round], score[0].x.toInt(), score[0].y.toInt()) &&
-    //       isSkull(bingo[round], score[1].x.toInt(), score[1].y.toInt())) {
-    //     List<Score> empt = score
-    //         .where((element) =>
-    //             !isSkull(bingo[round], element.x.toInt(), element.y.toInt()))
-    //         .toList();
-    //     if (empt.isNotEmpty) {
-    //       res.add([empt[0].x, empt[0].y]);
-    //     } else {
-    //       res.add([score[2].x, score[2].y]);
-    //     }
-    //   } else {
-    //     res.add([score[2].x, score[2].y]);
-    //   }
-    // }
+    if (score.isNotEmpty) res.add([score[0].x, score[0].y]);
+    if (score.length > 1) res.add([score[1].x, score[1].y]);
+    if (score.length > 2) {
+      if (isSkull(bingo[round], score[0].x.toInt(), score[0].y.toInt()) &&
+          isSkull(bingo[round], score[1].x.toInt(), score[1].y.toInt())) {
+        List<Score> empt = score
+            .where((element) =>
+                !isSkull(bingo[round], element.x.toInt(), element.y.toInt()))
+            .toList();
+        if (empt.isNotEmpty) {
+          res.add([empt[0].x, empt[0].y]);
+        } else {
+          res.add([score[2].x, score[2].y]);
+        }
+      } else {
+        res.add([score[2].x, score[2].y]);
+      }
+    }
     return res;
   }
 
   Color? boxBg(i, j) {
     List<List<num>> candi = candidateList();
-
     if (round > 1) {
-      if (candi.isNotEmpty && i == candi[0][0] && j == candi[0][1])
-        Color(0x0000FF);
-      else if (candi.length > 1 && i == candi[1][0] && j == candi[1][1])
-        Color(0x8888FF);
-      else if (candi.length > 2 && i == candi[2][0] && j == candi[2][1])
-        Color(0xCCCCFF);
+      if (candi.isNotEmpty && i == candi[0][0] && j == candi[0][1]) {
+        return Colors.blue;
+      } else if (candi.length > 1 && i == candi[1][0] && j == candi[1][1]) {
+        return Colors.blue[200];
+      } else if (candi.length > 2 && i == candi[2][0] && j == candi[2][1]) {
+        return Colors.blue[100];
+      }
     }
     return Colors.white;
   }
@@ -384,21 +407,21 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
   DecorationImage? boxBgImg(i, j) {
     Xy nowBingo = checkBingo(bingo[round]);
     if (round != 0 && i == hellPos[0] && j == hellPos[1]) {
-      return DecorationImage(
+      return const DecorationImage(
         fit: BoxFit.fill,
         alignment: Alignment.center,
         opacity: 0.8,
         image: AssetImage('images/bingo/hellskull.png'),
       );
     } else if (isRed(nowBingo, i, j) == true) {
-      return DecorationImage(
+      return const DecorationImage(
         fit: BoxFit.fill,
         alignment: Alignment.center,
         opacity: 0.8,
         image: AssetImage('images/bingo/redskull.png'),
       );
     } else if (bingo[round][i][j]) {
-      return DecorationImage(
+      return const DecorationImage(
         fit: BoxFit.fill,
         alignment: Alignment.center,
         opacity: 0.8,
@@ -421,7 +444,7 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
 
   void handlePreferSkull(num e) {
     preferSkull = e;
-    scoreWeight = [1e10, 2e9, 1e7, 5e4, 5e4 * 10 * e + 1e4, 100, 1];
+    scoreWeight = [1e10, 2e9, 1e7, 5e4, 5e5 * e + 1e4, 100, 1];
     notifyListeners();
   }
 
@@ -448,17 +471,18 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
   void clickBingo(x, y) {
     if (x < 0 || x >= 5 || y < 0 || y >= 5) return;
     if (isHell && round == 0) {
-      List<List<List<bool>>> res = bingo.sublist(0, round + 1);
-      res.add(bingo[round]);
+      final res = bingo.sublist(0, round + 1);
+      res.add(copyLLBist(bingo[round]));
       hellPos = [x, y];
       bingo = res;
       round += 1;
+      if (warnMsg != "") warnMsg = "";
     } else if (round < 2) {
-      List<List<List<bool>>> res = bingo.sublist(0, round + 1);
+      var res = bingo.sublist(0, round + 1);
       if (isSkull(res[round], x, y)) {
         warnMsg = "不能把头骨放在那里";
       } else {
-        res.add(bingo[round]);
+        res.add(copyLLBist(bingo[round]));
         res[round + 1][x][y] = true;
         bingo = res;
         round += 1;
@@ -500,5 +524,17 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
     if (warnMsg != "") warnMsg = "";
     if (round > 0) round -= 1;
     notifyListeners();
+  }
+
+  List<List<bool>> copyLLBist(List<List<bool>> list) {
+    final arr0 = <List<bool>>[];
+    for (var vv in list) {
+      final arr1 = <bool>[];
+      for (var vvv in vv) {
+        arr1.add(vvv);
+      }
+      arr0.add(arr1);
+    }
+    return arr0;
   }
 }

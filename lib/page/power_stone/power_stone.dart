@@ -1,11 +1,12 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 18:00:26
- * @LastEditTime: 2022-09-27 10:14:29
+ * @LastEditTime: 2022-09-29 11:39:05
  * @Description: 
  */
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class PowerStone extends StatefulWidget {
@@ -24,12 +25,24 @@ class _PowerStoneState extends State<PowerStone> {
     ];
 
     List a = [];
-    a = json.decode(json.encode(bb));
+    a = copyLLBist(bb);
     a[0][0] = true;
 
-    print("2------------${bb[0][0]}");
+    print("${listEquals(a, bb)}");
     return Scaffold(
       body: Container(),
     );
   }
+}
+
+List<List<bool>> copyLLBist(List<List<bool>> list) {
+  final arr0 = <List<bool>>[];
+  for (var vv in list) {
+    final arr1 = <bool>[];
+    for (var vvv in vv) {
+      arr1.add(vvv);
+    }
+    arr0.add(arr1);
+  }
+  return arr0;
 }
