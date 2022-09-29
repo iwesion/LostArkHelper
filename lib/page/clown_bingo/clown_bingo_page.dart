@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-23 17:12:26
- * @LastEditTime: 2022-09-26 18:30:04
+ * @LastEditTime: 2022-09-29 14:56:12
  * @Description: 
  */
 import 'dart:math';
@@ -78,9 +78,13 @@ class _ClownBingoPageState extends State<ClownBingoPage> {
                   ],
                 ),
                 Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black12..withAlpha(100)),
+                  ),
                   padding: EdgeInsets.only(top: 20),
+                  margin: EdgeInsets.only(top: 40),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text("炸弹放在骷髅的优先级(越小越好)"),
                       Slider(
@@ -92,10 +96,10 @@ class _ClownBingoPageState extends State<ClownBingoPage> {
                         max: 5,
                         min: 1,
                       ),
+                      Text(watchmodel.preferSkull.toString())
                     ],
                   ),
                 ),
-                Text(watchmodel.preferSkull.toString())
               ],
             ),
           ),
@@ -104,67 +108,76 @@ class _ClownBingoPageState extends State<ClownBingoPage> {
             width: 600,
             child: Column(
               children: [
-                Column(
-                  children: [
-                    Container(
-                        height: 50,
-                        child: Center(
-                            child: Text(watchmodel.round < 2
+                Container(
+                  color: Colors.white,
+                  height: 100,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                          height: 50,
+                          child: Center(
+                              child: Text(
+                            watchmodel.round < 2
                                 ? "请先放置初始炸弹"
-                                : "请放置${watchmodel.round - 1}炸弹"))),
-                    Container(
-                        height: 50,
-                        child: Center(
-                            child: Text(
-                          watchmodel.warnMsg,
-                          style: TextStyle(color: Colors.red),
-                        ))),
-                  ],
+                                : "请放置${watchmodel.round - 1}炸弹${(watchmodel.round - 1) % 3 == 0 ? ",完成此次触发bingo" : ""}",
+                            style: const TextStyle(
+                                color: Color.fromARGB(255, 74, 107, 135),
+                                fontSize: 30),
+                          ))),
+                      watchmodel.warnMsg.isNotEmpty
+                          ? Container(
+                              height: 50,
+                              child: Center(
+                                  child: Text(
+                                watchmodel.warnMsg,
+                                style: const TextStyle(
+                                    color: Colors.red, fontSize: 30),
+                              )))
+                          : Container(),
+                    ],
+                  ),
                 ),
-                Expanded(
-                  child: Center(
-                    child: Transform.rotate(
-                      angle: pi / 4,
-                      child: Container(
-                        width: 400,
-                        height: 400,
-                        child: GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 5, //横轴三个子widget
-                                  childAspectRatio: 1.0 //宽高比为1时，子widget
-                                  ),
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                readmodel.clickBingo(index ~/ 5, index % 5);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color:
-                                        watchmodel.boxBg(index ~/ 5, index % 5),
-                                    image: watchmodel.boxBgImg(
-                                        index ~/ 5, index % 5)),
-                                margin: EdgeInsets.all(4),
-                                child: Center(
-                                  child: Transform.rotate(
-                                      angle: -pi / 4,
-                                      child: Container(
-                                        child: Text(
-                                          "${index ~/ 5 + 1} -${index % 5 + 1}",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.green),
-                                        ),
-                                      )),
-                                ),
+                Transform.rotate(
+                  angle: pi / 4,
+                  child: Container(
+                    margin: EdgeInsets.only(top: 100, left: 100),
+                    width: 400,
+                    height: 400,
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 5, //横轴三个子widget
+                              childAspectRatio: 1.0 //宽高比为1时，子widget
                               ),
-                            );
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            readmodel.clickBingo(index ~/ 5, index % 5);
                           },
-                          itemCount: 25,
-                        ),
-                      ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: watchmodel.boxBg(index ~/ 5, index % 5),
+                                image:
+                                    watchmodel.boxBgImg(index ~/ 5, index % 5)),
+                            margin: EdgeInsets.all(4),
+                            child: Center(
+                              child: Transform.rotate(
+                                  angle: -pi / 4,
+                                  child: Container(
+                                    child: Text(
+                                      "${index ~/ 5 + 1} -${index % 5 + 1}",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green),
+                                    ),
+                                  )),
+                            ),
+                          ),
+                        );
+                      },
+                      itemCount: 25,
                     ),
                   ),
                 ),
