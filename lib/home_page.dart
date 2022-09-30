@@ -1,9 +1,11 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 16:59:39
- * @LastEditTime: 2022-09-29 16:55:35
+ * @LastEditTime: 2022-09-30 11:01:32
  * @Description: 
  */
+import 'dart:io';
+
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:lost_ark/common/my_drawer.dart';
@@ -44,8 +46,24 @@ class _HomePageState extends State<HomePage> {
       appBar: PreferredSize(
           child: MoveWindow(
             child: Container(
-              color: Colors.red,
-              child: Center(child: Text("lostark")),
+              color: Colors.grey[200],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(),
+                  Text("Lost Ark"),
+                  Container(
+                    color: Colors.black,
+                    child: Row(
+                      children: [
+                        MinimizeWindowButton(),
+                        MaximizeWindowButton(),
+                        CloseWindowButton(),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
           preferredSize: Size(500, 50)),

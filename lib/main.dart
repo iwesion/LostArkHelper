@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 16:30:23
- * @LastEditTime: 2022-09-23 18:14:45
+ * @LastEditTime: 2022-09-30 14:44:17
  * @Description: 
  */
 
@@ -10,6 +10,7 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:lost_ark/home_page.dart';
 import 'package:lost_ark/provider/bingo_provider/bingo_provider.dart';
 import 'package:lost_ark/provider/engraved_provider/engraved_provider.dart';
+import 'package:lost_ark/provider/power_stone_provider/power_stone_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
@@ -19,7 +20,8 @@ void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => MenuCounter()),
     ChangeNotifierProvider(create: (context) => EngravedModel()),
-    ChangeNotifierProvider(create: (context) => BingoProvider())
+    ChangeNotifierProvider(create: (context) => BingoProvider()),
+    ChangeNotifierProvider(create: (context) => PowerStoneProvider()),
   ], child: MyApp()));
   doWhenWindowReady(() {
     const initialSize = Size(900, 800);
