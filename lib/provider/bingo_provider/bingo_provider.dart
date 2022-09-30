@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-23 18:13:07
- * @LastEditTime: 2022-09-29 11:42:46
+ * @LastEditTime: 2022-09-30 09:57:53
  * @Description: 
  */
 
@@ -74,6 +74,8 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
 
   ///分数的重量
   List scoreWeight = [1e10, 2e9, 1e7, 5e4, 5e4 * 10 * 2 + 1e4, 100, 1];
+
+  List<List<num>> candi = [];
 
   List<List<bool>> transM(List<List<bool>> a) {
     return a[0]
@@ -391,7 +393,6 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
   }
 
   Color? boxBg(i, j) {
-    List<List<num>> candi = candidateList();
     if (round > 1) {
       if (candi.isNotEmpty && i == candi[0][0] && j == candi[0][1]) {
         return Colors.blue;
@@ -448,25 +449,6 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
     notifyListeners();
   }
 
-  int transNum(x) {
-    return x;
-  }
-
-  void transDoubleNum(x) {
-    if (x.length < 2) return;
-    if (x.length == 2)
-      return clickBingo(transNum(x[0]) - 1, transNum(x[1]) - 1);
-    if (x.split("십").length == 2)
-      return clickBingo(
-          transNum(x.split("십")[0]) - 1, transNum(x.split("십")[1]) - 1);
-    if (transNum(x[0]) > 0)
-      return clickBingo(transNum(x[0]) - 1, transNum(x.slice(1, x.length)) - 1);
-    if (transNum(x.slice(0, 2)) > 0)
-      return clickBingo(
-          transNum(x.slice(0, 2)) - 1, transNum(x.slice(2, x.length)) - 1);
-    return;
-  }
-
   ///放置炸弹
   void clickBingo(x, y) {
     if (x < 0 || x >= 5 || y < 0 || y >= 5) return;
@@ -498,6 +480,7 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
       round += 1;
       if (warnMsg != "") warnMsg = "";
     }
+    candi = candidateList();
     notifyListeners();
   }
 
