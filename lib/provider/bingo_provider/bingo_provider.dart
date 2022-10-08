@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-23 18:13:07
- * @LastEditTime: 2022-09-30 09:57:53
+ * @LastEditTime: 2022-10-08 11:44:42
  * @Description: 
  */
 
@@ -506,6 +506,7 @@ class BingoProvider with ChangeNotifier, DiagnosticableTreeMixin {
   void cancleBingo() {
     if (warnMsg != "") warnMsg = "";
     if (round > 0) round -= 1;
+    candi = candidateList();
     notifyListeners();
   }
 
