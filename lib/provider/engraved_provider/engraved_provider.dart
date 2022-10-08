@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-19 16:00:11
- * @LastEditTime: 2022-09-23 11:43:07
+ * @LastEditTime: 2022-10-08 17:51:10
  * @Description: 
  */
 import 'dart:math';
@@ -79,6 +79,12 @@ class EngravedModel with ChangeNotifier, DiagnosticableTreeMixin {
   void chgEngrave(String engrave, int index) {
     targetModelList[index].engrave = engrave;
     chgEngraveExpect(15, index);
+    notifyListeners();
+  }
+
+  void swapPlaces(int oldIndex, int newIndex) {
+    TargetModel model = targetModelList.removeAt(oldIndex);
+    targetModelList.insert(newIndex, model);
     notifyListeners();
   }
 

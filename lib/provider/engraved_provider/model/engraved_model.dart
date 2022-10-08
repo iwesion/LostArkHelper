@@ -38,6 +38,8 @@ class TargetModel {
   ///背景色
   Color? color;
 
+  Object? key;
+
   TargetModel({
     this.engrave,
     this.engraveEnergy,

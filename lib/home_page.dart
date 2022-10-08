@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 16:59:39
- * @LastEditTime: 2022-09-30 11:01:32
+ * @LastEditTime: 2022-10-08 16:52:15
  * @Description: 
  */
 import 'dart:io';
@@ -12,6 +12,7 @@ import 'package:lost_ark/common/my_drawer.dart';
 import 'package:lost_ark/page/clown_bingo/clown_bingo_page.dart';
 import 'package:lost_ark/page/image_page/image_page.dart';
 import 'package:lost_ark/page/power_stone/power_stone.dart';
+import 'package:lost_ark/page/test_page/test_page.dart';
 import 'package:provider/provider.dart';
 
 import 'page/engraved/engraved_page.dart';
@@ -40,7 +41,8 @@ class _HomePageState extends State<HomePage> {
       PageModel(title: "魅魔", page: ImagePage(img: "images/meimo/meimo_p1.png")),
       PageModel(
           title: "小丑",
-          page: ImagePage(img: "images/xiaochou/xiaochou_game4.png"))
+          page: ImagePage(img: "images/xiaochou/xiaochou_game4.png")),
+      PageModel(title: "test", page: TestPage()),
     ];
     return Scaffold(
       appBar: PreferredSize(
