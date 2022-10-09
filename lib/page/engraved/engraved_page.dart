@@ -1,12 +1,13 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 18:12:07
- * @LastEditTime: 2022-09-23 15:25:24
+ * @LastEditTime: 2022-10-09 10:06:38
  * @Description: 
  */
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:lost_ark/common/my_color.dart';
+import 'package:lost_ark/common/my_grid_dialog.dart';
 import 'package:lost_ark/page/engraved/view/engrave_negative.dart';
 import 'package:lost_ark/page/engraved/view/engraved_page_right.dart';
 import 'package:lost_ark/provider/engraved_provider/engraved_provider.dart';
@@ -151,7 +152,7 @@ class _EngravedPageState extends State<EngravedPage> {
                             builder: (context) {
                               List list = comModel.commonEngraved +
                                   model.currentProfession.engraved;
-                              return MyDialog(
+                              return MyGridDialog(
                                 list: list,
                                 onTap: (indexx) {
                                   context

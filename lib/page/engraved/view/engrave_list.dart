@@ -1,11 +1,12 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-20 14:43:07
- * @LastEditTime: 2022-10-08 17:57:30
+ * @LastEditTime: 2022-10-09 10:14:14
  * @Description: 
  */
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:lost_ark/common/my_grid_dialog.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -13,6 +14,7 @@ import 'package:reorderables/reorderables.dart';
 import '../../../common/my_dialog.dart';
 import '../../../provider/engraved_provider/engraved_provider.dart';
 import '../../../provider/engraved_provider/model/engraved_model.dart';
+import '../../power_stone/view/drop_down_dialog.dart';
 
 class EngraveList extends StatelessWidget {
   const EngraveList({
@@ -83,8 +85,9 @@ class EngraveList extends StatelessWidget {
             onTap: () => {
               SmartDialog.show(
                 builder: (xcontext) {
-                  return MyDialog(
+                  return MyGridDialog(
                     list: list,
+                    model: model.targetModelList[index],
                     onTap: (indexx) {
                       context
                           .read<EngravedModel>()
@@ -105,28 +108,36 @@ class EngraveList extends StatelessWidget {
             ),
           ),
           //修改铭刻期望值
-          GestureDetector(
-            onTap: () {
-              SmartDialog.show(
-                builder: (context) => MyDialog(
-                  list: comModel.engraveExpect,
-                  onTap: (indexx) {
-                    context.read<EngravedModel>().chgEngraveExpect(
-                        comModel.engraveExpect[indexx], index);
-                  },
-                ),
-              );
-            },
-            child: Container(
-              color: model.targetModelList[index].color?.withAlpha(100),
-              width: 100,
-              child: Center(
-                  child: Text(
-                model.targetModelList[index].engraveEnergy.toString(),
-                style: TextStyle(color: Colors.white),
-              )),
-            ),
-          ),
+          Builder(builder: (contexxt) {
+            return GestureDetector(
+              onTap: () {
+                SmartDialog.showAttach(
+                    targetContext: contexxt,
+                    alignment: Alignment.bottomCenter,
+                    // animationType: SmartAnimationType.scale,
+                    scalePointBuilder: (selfSize) => Offset(selfSize.width, 0),
+                    builder: (_) {
+                      return DropDownDialog(
+                        width: 100,
+                        list: comModel.engraveExpect,
+                        onPressed: (indexx) {
+                          context.read<EngravedModel>().chgEngraveExpect(
+                              comModel.engraveExpect[indexx], index);
+                        },
+                      );
+                    });
+              },
+              child: Container(
+                color: model.targetModelList[index].color?.withAlpha(100),
+                width: 100,
+                child: Center(
+                    child: Text(
+                  model.targetModelList[index].engraveEnergy.toString(),
+                  style: TextStyle(color: Colors.white),
+                )),
+              ),
+            );
+          }),
           //期望值差
           Container(
             width: 100,
@@ -136,7 +147,9 @@ class EngraveList extends StatelessWidget {
               style: TextStyle(
                   color: model.targetModelList[index].gap! >= 0
                       ? Colors.cyan[300]
-                      : Colors.red),
+                      : Colors.red,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold),
             )),
           ),
         ],

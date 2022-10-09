@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-19 16:32:41
- * @LastEditTime: 2022-09-20 11:24:42
+ * @LastEditTime: 2022-10-09 10:03:53
  * @Description: 
  */
 import 'package:flutter/material.dart';
@@ -26,7 +26,10 @@ class _MyDialogState extends State<MyDialog> {
     return Container(
       width: 300,
       height: 300,
-      color: Colors.white,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
       child: ListView.builder(
         itemBuilder: (context, index) {
           return ListTile(

@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-20 16:29:18
- * @LastEditTime: 2022-09-26 10:54:53
+ * @LastEditTime: 2022-10-09 11:22:22
  * @Description: 
  */
 import 'package:flutter/foundation.dart';
@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 
 import '../../../common/my_color.dart';
 import '../../../provider/engraved_provider/model/engraved_model.dart';
+import '../../power_stone/view/drop_down_dialog.dart';
 
 class EngravePageRightView extends StatefulWidget
     with ChangeNotifier, DiagnosticableTreeMixin {
@@ -50,12 +51,14 @@ class _EngravePageRightViewState extends State<EngravePageRightView> {
               height: 100,
               child: Row(
                 children: [
+                  //首饰名字
                   Container(
                     width: 100,
                     child: Center(child: Text(listItem.name)),
                   ),
                   Column(
                     children: [
+                      // 铭刻1
                       GestureDetector(
                         onTap: () {
                           SmartDialog.show(
@@ -80,7 +83,8 @@ class _EngravePageRightViewState extends State<EngravePageRightView> {
                         child: Container(
                           height: 50,
                           width: 100,
-                          color: model.equipmentList[index].engravedColor1,
+                          color: model.equipmentList[index].engravedColor1 ??
+                              Colors.transparent,
                           child: Center(
                               child: Text(
                             listItem.engraved1 ?? "选择铭刻",
@@ -91,6 +95,7 @@ class _EngravePageRightViewState extends State<EngravePageRightView> {
                           )),
                         ),
                       ),
+                      // 铭刻2
                       GestureDetector(
                         onTap: () {
                           SmartDialog.show(
@@ -115,7 +120,8 @@ class _EngravePageRightViewState extends State<EngravePageRightView> {
                         child: Container(
                           height: 50,
                           width: 100,
-                          color: model.equipmentList[index].engravedColor2,
+                          color: model.equipmentList[index].engravedColor2 ??
+                              Colors.transparent,
                           child: Center(
                               child: Text(
                             listItem.engraved2 ?? "选择铭刻",
@@ -130,74 +136,100 @@ class _EngravePageRightViewState extends State<EngravePageRightView> {
                   ),
                   Column(
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          SmartDialog.show(
-                            builder: (context) {
-                              List list = index != 5
-                                  ? index == 6
-                                      ? [3, 6, 9, 12]
-                                      : [3, 4, 5, 6]
-                                  : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-                              return MyDialog(
-                                list: list,
-                                onTap: (indexx) {
-                                  model.equipmentList[index].engravedNum1 =
-                                      list[indexx];
-                                  model.chgEquipmentModel();
-                                },
-                              );
-                            },
-                          );
-                        },
-                        child: Container(
-                          height: 50,
-                          width: 100,
-                          child: Center(
-                              child: Text(
-                            listItem.engravedNum1.toString(),
-                            style: TextStyle(
-                                color: listItem.engravedNum1 != null &&
-                                        listItem.engravedNum1! > 0
-                                    ? Color.fromARGB(255, 40, 7, 255)
-                                    : Colors.grey[300]),
-                          )),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          SmartDialog.show(
-                            builder: (context) {
-                              List list = index != 5
-                                  ? index == 6
-                                      ? [3, 6, 9, 12]
-                                      : [3, 4, 5, 6]
-                                  : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-                              return MyDialog(
-                                list: list,
-                                onTap: (indexx) {
-                                  model.equipmentList[index].engravedNum2 =
-                                      list[indexx];
-                                  model.chgEquipmentModel();
-                                },
-                              );
-                            },
-                          );
-                        },
-                        child: Container(
-                          height: 50,
-                          width: 100,
-                          child: Center(
-                              child: Text(
-                            listItem.engravedNum2.toString(),
-                            style: TextStyle(
-                                color: listItem.engravedNum2 != null &&
-                                        listItem.engravedNum2! > 0
-                                    ? Color.fromARGB(255, 40, 7, 255)
-                                    : Colors.grey[300]),
-                          )),
-                        ),
-                      )
+                      // 铭刻1数
+                      Builder(builder: (contexxt) {
+                        return GestureDetector(
+                          onTap: () {
+                            SmartDialog.showAttach(
+                                targetContext: contexxt,
+                                alignment: index > 4
+                                    ? Alignment.topCenter
+                                    : Alignment.bottomCenter,
+                                // animationType: SmartAnimationType.scale,
+                                scalePointBuilder: (selfSize) =>
+                                    Offset(selfSize.width, 0),
+                                builder: (_) {
+                                  List<int> list = index != 5
+                                      ? index == 6
+                                          ? [3, 6, 9, 12]
+                                          : [3, 4, 5, 6]
+                                      : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                                  return DropDownDialog(
+                                    width: 100,
+                                    list: list,
+                                    onPressed: (indexx) {
+                                      model.equipmentList[index].engravedNum1 =
+                                          list[indexx];
+                                      model.chgEquipmentModel();
+                                    },
+                                  );
+                                });
+                          },
+                          child: Container(
+                            color: Colors.transparent,
+                            height: 50,
+                            width: 100,
+                            child: Center(
+                                child: Text(
+                              listItem.engravedNum1.toString(),
+                              style: TextStyle(
+                                  color: listItem.engravedNum1 != null &&
+                                          listItem.engravedNum1! > 0
+                                      ? Color.fromARGB(255, 40, 7, 255)
+                                      : Colors.grey[300],
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 24),
+                            )),
+                          ),
+                        );
+                      }),
+                      // 铭刻2数
+                      Builder(builder: (contexxt) {
+                        return GestureDetector(
+                          onTap: () {
+                            SmartDialog.showAttach(
+                                targetContext: contexxt,
+                                alignment: index > 4
+                                    ? Alignment.topCenter
+                                    : Alignment.bottomCenter,
+                                // animationType: SmartAnimationType.scale,
+                                scalePointBuilder: (selfSize) =>
+                                    Offset(selfSize.width, 0),
+                                builder: (_) {
+                                  List<int> list = index != 5
+                                      ? index == 6
+                                          ? [3, 6, 9, 12]
+                                          : [3, 4, 5, 6]
+                                      : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                                  return DropDownDialog(
+                                    width: 100,
+                                    list: list,
+                                    onPressed: (indexx) {
+                                      model.equipmentList[index].engravedNum2 =
+                                          list[indexx];
+                                      model.chgEquipmentModel();
+                                    },
+                                  );
+                                });
+                          },
+                          child: Container(
+                            height: 50,
+                            width: 100,
+                            color: Colors.transparent,
+                            child: Center(
+                                child: Text(
+                              listItem.engravedNum2.toString(),
+                              style: TextStyle(
+                                  color: listItem.engravedNum2 != null &&
+                                          listItem.engravedNum2! > 0
+                                      ? Color.fromARGB(255, 40, 7, 255)
+                                      : Colors.grey[300],
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w400),
+                            )),
+                          ),
+                        );
+                      })
                     ],
                   ),
                   index < 6
@@ -250,37 +282,50 @@ class _EngravePageRightViewState extends State<EngravePageRightView> {
                         )
                       : Container(),
                   index < 6
-                      ? GestureDetector(
-                          onTap: () {
-                            SmartDialog.show(
-                              builder: (context) {
-                                List list = index != 5
-                                    ? [1, 2, 3, 4, 5]
-                                    : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-                                return MyDialog(
-                                  list: list,
-                                  onTap: (indexx) {
-                                    model.equipmentList[index]
-                                        .negativeEngraveNum = list[indexx];
-                                    model.chgEquipmentModel();
-                                  },
-                                );
-                              },
-                            );
-                          },
-                          child: Container(
-                            width: 100,
-                            child: Center(
-                                child: Text(
-                              listItem.negativeEngraveNum.toString(),
-                              style: TextStyle(
-                                  color: listItem.negativeEngraveNum != null &&
-                                          listItem.negativeEngraveNum! > 0
-                                      ? Colors.black
-                                      : Colors.grey[300]),
-                            )),
-                          ),
-                        )
+                      ? Builder(builder: (contexxt) {
+                          return GestureDetector(
+                            onTap: () {
+                              SmartDialog.showAttach(
+                                  targetContext: contexxt,
+                                  alignment: index > 3
+                                      ? Alignment.topCenter
+                                      : Alignment.bottomCenter,
+                                  // animationType: SmartAnimationType.scale,
+                                  scalePointBuilder: (selfSize) =>
+                                      Offset(selfSize.width, 0),
+                                  builder: (_) {
+                                    List<int> list = index != 5
+                                        ? [1, 2, 3, 4, 5]
+                                        : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                                    return DropDownDialog(
+                                      width: 100,
+                                      list: list,
+                                      onPressed: (indexx) {
+                                        model.equipmentList[index]
+                                            .negativeEngraveNum = list[indexx];
+                                        model.chgEquipmentModel();
+                                      },
+                                    );
+                                  });
+                            },
+                            child: Container(
+                              width: 100,
+                              color: Colors.transparent,
+                              child: Center(
+                                  child: Text(
+                                listItem.negativeEngraveNum.toString(),
+                                style: TextStyle(
+                                    color:
+                                        listItem.negativeEngraveNum != null &&
+                                                listItem.negativeEngraveNum! > 0
+                                            ? Colors.black
+                                            : Colors.grey[300],
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 22),
+                              )),
+                            ),
+                          );
+                        })
                       : Container(),
                 ],
               ),
