@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 18:00:26
- * @LastEditTime: 2022-09-30 15:58:19
+ * @LastEditTime: 2022-10-10 18:41:27
  * @Description: 
  */
 import 'dart:convert';
@@ -168,22 +168,40 @@ class _PowerStoneState extends State<PowerStone> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: s
-                            .map((e) => Container(
-                                  color: Colors.red,
-                                  width: 40,
-                                  height: 40,
-                                ))
+                            .map(
+                              (e) => Image.asset(
+                                "images/power_stone/engrave_normal.png",
+                                width: 50,
+                                height: 50,
+                              ),
+                            )
                             .toList(),
                       ),
                     ),
                     Container(
-                      child: Icon(Icons.star_border),
-                      color: Colors.amber,
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Image.asset(
+                        "images/power_stone/star.png",
+                        width: 40,
+                        height: 40,
+                      ),
                     ),
                     Container(
-                      width: 100,
-                      child: Column(
-                        children: [Text("成功"), Text("失败")],
+                      width: 150,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Image.asset(
+                            "images/power_stone/success.png",
+                            width: 50,
+                            height: 50,
+                          ),
+                          Image.asset(
+                            "images/power_stone/failed.png",
+                            width: 50,
+                            height: 50,
+                          ),
+                        ],
                       ),
                     )
                   ],

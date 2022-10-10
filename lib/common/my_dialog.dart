@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-19 16:32:41
- * @LastEditTime: 2022-10-09 10:03:53
+ * @LastEditTime: 2022-10-10 16:35:58
  * @Description: 
  */
 import 'package:flutter/material.dart';
@@ -23,25 +23,25 @@ class MyDialog extends StatefulWidget {
 class _MyDialogState extends State<MyDialog> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 300,
-      height: 300,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-      ),
-      child: ListView.builder(
-        itemBuilder: (context, index) {
-          return ListTile(
-              onTap: () {
-                SmartDialog.dismiss();
-                if (widget.onTap != null) {
-                  widget.onTap!(index);
-                }
-              },
-              title: Text(widget.list[index].toString()));
-        },
-        itemCount: widget.list.length,
+    return Material(
+      borderRadius: BorderRadius.all(Radius.circular(8)),
+      child: Container(
+        width: 300,
+        height: 300,
+        child: ListView.builder(
+          itemBuilder: (context, index) {
+            return ListTile(
+                hoverColor: Colors.grey[400],
+                onTap: () {
+                  SmartDialog.dismiss();
+                  if (widget.onTap != null) {
+                    widget.onTap!(index);
+                  }
+                },
+                title: Text(widget.list[index].toString()));
+          },
+          itemCount: widget.list.length,
+        ),
       ),
     );
   }

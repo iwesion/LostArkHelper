@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-20 14:43:07
- * @LastEditTime: 2022-10-09 10:14:14
+ * @LastEditTime: 2022-10-10 16:35:16
  * @Description: 
  */
 import 'package:flutter/material.dart';
@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:reorderables/reorderables.dart';
-import '../../../common/my_dialog.dart';
 import '../../../provider/engraved_provider/engraved_provider.dart';
 import '../../../provider/engraved_provider/model/engraved_model.dart';
 import '../../power_stone/view/drop_down_dialog.dart';
@@ -58,7 +57,8 @@ class EngraveList extends StatelessWidget {
   Slidable _listItem(int index, List<dynamic> list, BuildContext context) {
     return Slidable(
       endActionPane: ActionPane(
-        motion: const ScrollMotion(),
+        extentRatio: 0.25,
+        motion: const BehindMotion(),
         children: [
           SlidableAction(
             onPressed: (context) {
