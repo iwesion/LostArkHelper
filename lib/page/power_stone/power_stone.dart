@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 18:00:26
- * @LastEditTime: 2022-10-10 18:41:27
+ * @LastEditTime: 2022-10-11 14:40:02
  * @Description: 
  */
 import 'dart:convert';
@@ -152,54 +152,109 @@ class _PowerStoneState extends State<PowerStone> {
           ListView.builder(
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              List s = index == 0
-                  ? watchModel.currentStone.powerOne
-                  : index == 1
-                      ? watchModel.currentStone.powerTwe
-                      : watchModel.currentStone.negative;
+              List<bool> s;
+              if (index == 0) {
+                s = watchModel.currentStone.powerOne;
+              } else if (index == 1) {
+                s = watchModel.currentStone.powerTwe;
+              } else {
+                s = watchModel.currentStone.negative;
+              }
               return Container(
+                height: 100,
                 child: Row(
                   children: [
-                    Container(
+                    SizedBox(
                         width: 100,
                         height: 100,
                         child: Center(child: Text(titles[index]))),
                     Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: s
-                            .map(
-                              (e) => Image.asset(
-                                "images/power_stone/engrave_normal.png",
+                      child: ListView.builder(
+                        controller: ScrollController(),
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        itemBuilder: (context, indexx) {
+                          if (indexx < s.length) {
+                            String path = "";
+                            if (index == 2) {
+                              path = s[indexx]
+                                  ? "images/power_stone/negative_success.png"
+                                  : "images/power_stone/negative_fail.png";
+                            } else {
+                              path = s[indexx]
+                                  ? "images/power_stone/engrave_success.png"
+                                  : "images/power_stone/engrave_fail.png";
+                            }
+                            return Opacity(
+                              opacity: s[indexx] ? 1 : 0.2,
+                              child: Image.asset(
+                                path,
                                 width: 50,
                                 height: 50,
                               ),
-                            )
-                            .toList(),
+                            );
+                          }
+                          if (index == 2) {
+                            return Image.asset(
+                              "images/power_stone/negative_normal.png",
+                              width: 50,
+                              height: 50,
+                            );
+                          } else {
+                            return Image.asset(
+                              "images/power_stone/engrave_normal.png",
+                              width: 50,
+                              height: 50,
+                            );
+                          }
+                        },
+                        itemCount: watchModel.stoneGrid,
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Image.asset(
                         "images/power_stone/star.png",
                         width: 40,
                         height: 40,
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: 150,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Image.asset(
-                            "images/power_stone/success.png",
-                            width: 50,
-                            height: 50,
+                          InkWell(
+                            onTap: () {
+                              if (index == 0) {
+                                readModel.chg(powerOne: true);
+                              } else if (index == 1) {
+                                readModel.chg(powerTwe: true);
+                              } else {
+                                readModel.chg(negative: true);
+                              }
+                            },
+                            child: Image.asset(
+                              "images/power_stone/success.png",
+                              width: 50,
+                              height: 50,
+                            ),
                           ),
-                          Image.asset(
-                            "images/power_stone/failed.png",
-                            width: 50,
-                            height: 50,
+                          InkWell(
+                            onTap: () {
+                              if (index == 0) {
+                                readModel.chg(powerOne: false);
+                              } else if (index == 1) {
+                                readModel.chg(powerTwe: false);
+                              } else {
+                                readModel.chg(negative: false);
+                              }
+                            },
+                            child: Image.asset(
+                              "images/power_stone/failed.png",
+                              width: 50,
+                              height: 50,
+                            ),
                           ),
                         ],
                       ),
@@ -215,8 +270,16 @@ class _PowerStoneState extends State<PowerStone> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                TextButton(onPressed: () {}, child: Text("重置")),
-                TextButton(onPressed: () {}, child: Text("后退")),
+                TextButton(
+                    onPressed: () {
+                      readModel.reset();
+                    },
+                    child: Text("重置")),
+                TextButton(
+                    onPressed: () {
+                      readModel.rollback();
+                    },
+                    child: Text("后退")),
               ],
             ),
           )

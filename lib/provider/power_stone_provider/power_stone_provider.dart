@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-29 18:25:47
- * @LastEditTime: 2022-09-30 15:56:24
+ * @LastEditTime: 2022-10-11 12:15:27
  * @Description: 
  */
 import 'package:flutter/foundation.dart';
@@ -14,10 +14,15 @@ class Stone {
   Stone(
       {required this.negative, required this.powerOne, required this.powerTwe});
   static Stone init() {
-    return Stone(
-        negative: List.filled(10, false),
-        powerOne: List.filled(10, false),
-        powerTwe: List.filled(10, false));
+    return Stone(negative: [], powerOne: [], powerTwe: []);
+  }
+
+  Stone copy() {
+    Stone s = Stone.init();
+    s.powerOne = List.from(powerOne);
+    s.powerTwe = List.from(powerTwe);
+    s.negative = List.from(negative);
+    return s;
   }
 }
 
@@ -60,18 +65,42 @@ class PowerStoneProvider with ChangeNotifier, DiagnosticableTreeMixin {
   ///变更石头的孔数
   void chgStoneGrid(int n) {
     stoneGrid = n;
-    currentStone.negative = List.filled(n, false);
-    currentStone.powerOne = List.filled(n, false);
-    currentStone.powerTwe = List.filled(n, false);
+    currentStone.negative = [];
+    currentStone.powerOne = [];
+    currentStone.powerTwe = [];
     clickList.clear();
     notifyListeners();
   }
 
-  void reset() {
-    chgStoneGrid(stoneGrid);
+  void chg({bool? powerOne, bool? powerTwe, bool? negative}) {
+    if (powerOne != null && currentStone.powerOne.length < stoneGrid) {
+      currentStone.powerOne.add(powerOne);
+      clickList.add(currentStone.copy());
+      chgUI();
+    }
+    if (powerTwe != null && currentStone.powerTwe.length < stoneGrid) {
+      currentStone.powerTwe.add(powerTwe);
+      clickList.add(currentStone.copy());
+      chgUI();
+    }
+    if (negative != null && currentStone.negative.length < stoneGrid) {
+      currentStone.negative.add(negative);
+      clickList.add(currentStone.copy());
+      chgUI();
+    }
   }
 
-  void back() {
-    clickList.removeLast();
+  void reset() {
+    chgStoneGrid(stoneGrid);
+    chgUI();
+  }
+
+  void rollback() {
+    if (clickList.isNotEmpty) {
+      clickList.removeLast();
+      currentStone =
+          clickList.isNotEmpty ? clickList.last.copy() : Stone.init();
+      chgUI();
+    }
   }
 }
