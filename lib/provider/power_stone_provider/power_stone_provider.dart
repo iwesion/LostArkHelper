@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-29 18:25:47
- * @LastEditTime: 2022-10-14 17:23:35
+ * @LastEditTime: 2022-10-14 18:16:11
  * @Description: 
  */
 import 'dart:math';
@@ -55,6 +55,10 @@ class PowerStoneProvider with ChangeNotifier, DiagnosticableTreeMixin {
     return pList[p];
   }
 
+  int marketingStar = 0;
+
+  List pTable = [];
+
   ///能力石孔数
   int stoneGrid = 10;
   int expectPower1 = 7;
@@ -77,12 +81,14 @@ class PowerStoneProvider with ChangeNotifier, DiagnosticableTreeMixin {
     currentStone.negative = [];
     currentStone.powerOne = [];
     currentStone.powerTwe = [];
+    pIndex = 5;
     clickList.clear();
+    initView();
     notifyListeners();
   }
 
   void initView() {
-    var pTable = getPTable(stoneGrid, stoneGrid, stoneGrid, pIndex);
+    pTable = getPTable(stoneGrid, stoneGrid, stoneGrid, pIndex);
   }
 
   void chg({bool? powerOne, bool? powerTwe, bool? negative}) {
@@ -124,8 +130,30 @@ class PowerStoneProvider with ChangeNotifier, DiagnosticableTreeMixin {
     var nb =
         stoneGrid - (clickList.length > 0 ? clickList.last.negative.length : 0);
 
-    var pTable = getPTable(na1, na2, nb, pIndex);
-    print(pTable);
+    pTable = getPTable(na1, na2, nb, pIndex);
+  }
+
+  void _getMakingSatr(pTable) {
+    if (pTable[0][2] == 0 && pTable[2][0] == 0 && pTable[2][2] > 0) {
+      marketingStar = 2; //-->2
+    } else if (pTable[0][2] > pTable[2][2]) {
+      marketingStar = 2; //-->2
+    } else if (pTable[0][0] > pTable[1][0] && pTable[0][1] < pTable[1][1]) {
+      marketingStar = 0; //-->0
+    } else if (pTable[0][0] < pTable[1][0] && pTable[0][1] > pTable[1][1]) {
+      marketingStar = 1; //-->1
+    } else {
+      if (currentStone.powerOne.length == stoneGrid &&
+          currentStone.powerTwe.length == stoneGrid) {
+        marketingStar = -1;
+      } else if (currentStone.powerOne.length == stoneGrid) {
+        marketingStar = 1; ////-->0,1
+      } else if (currentStone.powerTwe.length == stoneGrid) {
+        marketingStar = 0; ////-->0,1
+      } else {
+        marketingStar = -1;
+      }
+    }
   }
 
   // 从这里开始演算法
@@ -163,6 +191,12 @@ class PowerStoneProvider with ChangeNotifier, DiagnosticableTreeMixin {
       Ea1A2 = calculateEa1(na1, na2 - 1, nb, p, false);
       Ea2A2 = EaA - Ea1A2;
     }
+    _getMakingSatr([
+      [Ea1A1, Ea2A1, EbA],
+      [Ea1A2, Ea2A2, EbA],
+      [EaB, EaB, EbB],
+      max(EaA, EaB) // 平均
+    ]);
 
     return [
       [Ea1A1, Ea2A1, EbA],

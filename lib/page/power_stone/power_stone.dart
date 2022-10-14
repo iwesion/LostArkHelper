@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 18:00:26
- * @LastEditTime: 2022-10-14 16:53:24
+ * @LastEditTime: 2022-10-14 18:43:25
  * @Description: 
  */
 import 'dart:convert';
@@ -39,123 +39,47 @@ class _PowerStoneState extends State<PowerStone> {
       body: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                children: [
-                  Text("能力石"),
-                  Builder(builder: (contexxt) {
-                    return TextButton(
-                        onPressed: () {
-                          SmartDialog.showAttach(
-                              targetContext: contexxt,
-                              alignment: Alignment.bottomCenter,
-                              // animationType: SmartAnimationType.scale,
-                              scalePointBuilder: (selfSize) =>
-                                  Offset(selfSize.width, 0),
-                              builder: (_) {
-                                return DropDownDialog(
-                                  list: stoneHole,
-                                  i: watchModel.stoneGrid,
-                                  onPressed: (index) {
-                                    print(stoneHole[index]);
-                                    readModel.chgStoneGrid(stoneHole[index]);
-                                  },
-                                );
-                              });
-                        },
-                        child: Text("${watchModel.stoneGrid}格"));
-                  }),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(50.0),
+                child: Row(
+                  children: [
+                    Text("能力石"),
+                    Builder(builder: (contexxt) {
+                      return TextButton(
+                          onPressed: () {
+                            SmartDialog.showAttach(
+                                targetContext: contexxt,
+                                alignment: Alignment.bottomCenter,
+                                // animationType: SmartAnimationType.scale,
+                                scalePointBuilder: (selfSize) =>
+                                    Offset(selfSize.width, 0),
+                                builder: (_) {
+                                  return DropDownDialog(
+                                    list: stoneHole,
+                                    i: watchModel.stoneGrid,
+                                    onPressed: (index) {
+                                      print(stoneHole[index]);
+                                      readModel.chgStoneGrid(stoneHole[index]);
+                                    },
+                                  );
+                                });
+                          },
+                          child: Text("${watchModel.stoneGrid}格"));
+                    }),
+                  ],
+                ),
               ),
-              Row(
-                children: [
-                  Text("自动调整"),
-                  Switch(value: true, onChanged: (b) {}),
-                ],
-              )
+              // Row(
+              //   children: [
+              //     Text("自动调整"),
+              //     Switch(value: true, onChanged: (b) {}),
+              //   ],
+              // )
             ],
           ),
-          Container(
-            height: 100,
-            color: Colors.grey[500],
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Builder(builder: (contexxt) {
-                  return TextButton(
-                      onPressed: () {
-                        SmartDialog.showAttach(
-                            targetContext: contexxt,
-                            alignment: Alignment.bottomCenter,
-                            scalePointBuilder: (selfSize) =>
-                                Offset(selfSize.width, 0),
-                            builder: (_) {
-                              return DropDownDialog(
-                                list: power,
-                                onPressed: (index) {
-                                  readModel.expectPower1 = power[index];
-                                  readModel.chgUI();
-                                },
-                              );
-                            });
-                      },
-                      child: RichText(
-                          text: TextSpan(text: "铭刻1期望值:", children: [
-                        TextSpan(text: readModel.expectPower1.toString())
-                      ])));
-                }),
-                Builder(builder: (contexxt) {
-                  return TextButton(
-                      onPressed: () {
-                        SmartDialog.showAttach(
-                            targetContext: contexxt,
-                            alignment: Alignment.bottomCenter,
-                            scalePointBuilder: (selfSize) =>
-                                Offset(selfSize.width, 0),
-                            builder: (_) {
-                              return DropDownDialog(
-                                list: power,
-                                onPressed: (index) {
-                                  readModel.expectPower2 = power[index];
-                                  readModel.chgUI();
-                                },
-                              );
-                            });
-                      },
-                      child: RichText(
-                          text: TextSpan(text: "铭刻2期望值:", children: [
-                        TextSpan(text: readModel.expectPower2.toString())
-                      ])));
-                }),
-                Builder(builder: (contexxt) {
-                  return TextButton(
-                      onPressed: () {
-                        SmartDialog.showAttach(
-                            targetContext: contexxt,
-                            alignment: Alignment.bottomCenter,
-                            // animationType: SmartAnimationType.scale,
-                            scalePointBuilder: (selfSize) =>
-                                Offset(selfSize.width, 0),
-                            builder: (_) {
-                              return DropDownDialog(
-                                list: power.reversed.toList(),
-                                onPressed: (index) {
-                                  readModel.expectEegative =
-                                      power.reversed.toList()[index];
-                                  readModel.chgUI();
-                                },
-                              );
-                            });
-                      },
-                      child: RichText(
-                          text: TextSpan(text: "负面期望值:", children: [
-                        TextSpan(text: watchModel.expectEegative.toString())
-                      ])));
-                }),
-              ],
-            ),
-          ),
+          // _setExpect(readModel, watchModel),
           ListView.builder(
             shrinkWrap: true,
             itemBuilder: (context, index) {
@@ -218,13 +142,24 @@ class _PowerStoneState extends State<PowerStone> {
                         itemCount: watchModel.stoneGrid,
                       ),
                     ),
+                    Text(
+                      watchModel.marketingStar == index
+                          ? watchModel.pList[watchModel.pIndex].toString()
+                          : "",
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.pink),
+                    ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Image.asset(
-                        "images/power_stone/star.png",
-                        width: 40,
-                        height: 40,
-                      ),
+                      child: watchModel.marketingStar == index
+                          ? Image.asset(
+                              "images/power_stone/star.png",
+                              width: 40,
+                              height: 40,
+                            )
+                          : Container(),
                     ),
                     SizedBox(
                       width: 150,
@@ -281,15 +216,190 @@ class _PowerStoneState extends State<PowerStone> {
                     onPressed: () {
                       readModel.reset();
                     },
-                    child: Text("重置")),
+                    child: Padding(
+                      padding: const EdgeInsets.all(14.0),
+                      child: Text(
+                        "重置",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.red),
+                      ),
+                    )),
                 TextButton(
                     onPressed: () {
                       readModel.rollback();
                     },
-                    child: Text("后退")),
+                    child: Padding(
+                      padding: const EdgeInsets.all(14.0),
+                      child: Text(
+                        "后退",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.blue),
+                      ),
+                    )),
               ],
             ),
+          ),
+          Container(
+            height: 50,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                width: 200,
+              ),
+              Container(width: 200, child: Center(child: Text("铭刻1增长"))),
+              Container(width: 200, child: Center(child: Text("铭刻2增长"))),
+              Container(width: 200, child: Center(child: Text("负面增长"))),
+            ],
+          ),
+          ListView(
+            shrinkWrap: true,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(width: 200, child: Center(child: Text("铭刻1"))),
+                  Container(
+                      width: 200,
+                      child: Center(
+                          child: Text(watchModel.pTable[0][0].toString()))),
+                  Container(
+                      width: 200,
+                      child: Center(
+                          child: Text(watchModel.pTable[0][1].toString()))),
+                  Container(
+                      width: 200,
+                      child: Center(
+                          child: Text(watchModel.pTable[0][2].toString()))),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(width: 200, child: Center(child: Text("铭刻2"))),
+                  Container(
+                      width: 200,
+                      child: Center(
+                          child: Text(watchModel.pTable[1][0].toString()))),
+                  Container(
+                      width: 200,
+                      child: Center(
+                          child: Text(watchModel.pTable[1][1].toString()))),
+                  Container(
+                      width: 200,
+                      child: Center(
+                          child: Text(watchModel.pTable[1][2].toString()))),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(width: 200, child: Center(child: Text("负面"))),
+                  Container(
+                      width: 200,
+                      child: Center(
+                          child: Text(watchModel.pTable[2][0].toString()))),
+                  Container(
+                      width: 200,
+                      child: Center(
+                          child: Text(watchModel.pTable[2][1].toString()))),
+                  Container(
+                      width: 200,
+                      child: Center(
+                          child: Text(watchModel.pTable[2][2].toString()))),
+                ],
+              )
+            ],
           )
+        ],
+      ),
+    );
+  }
+
+  Container _setExpect(
+      PowerStoneProvider readModel, PowerStoneProvider watchModel) {
+    return Container(
+      height: 100,
+      color: Colors.grey[500],
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Builder(builder: (contexxt) {
+            return TextButton(
+                onPressed: () {
+                  SmartDialog.showAttach(
+                      targetContext: contexxt,
+                      alignment: Alignment.bottomCenter,
+                      scalePointBuilder: (selfSize) =>
+                          Offset(selfSize.width, 0),
+                      builder: (_) {
+                        return DropDownDialog(
+                          list: power,
+                          onPressed: (index) {
+                            readModel.expectPower1 = power[index];
+                            readModel.chgUI();
+                          },
+                        );
+                      });
+                },
+                child: RichText(
+                    text: TextSpan(text: "铭刻1期望值:", children: [
+                  TextSpan(text: readModel.expectPower1.toString())
+                ])));
+          }),
+          Builder(builder: (contexxt) {
+            return TextButton(
+                onPressed: () {
+                  SmartDialog.showAttach(
+                      targetContext: contexxt,
+                      alignment: Alignment.bottomCenter,
+                      scalePointBuilder: (selfSize) =>
+                          Offset(selfSize.width, 0),
+                      builder: (_) {
+                        return DropDownDialog(
+                          list: power,
+                          onPressed: (index) {
+                            readModel.expectPower2 = power[index];
+                            readModel.chgUI();
+                          },
+                        );
+                      });
+                },
+                child: RichText(
+                    text: TextSpan(text: "铭刻2期望值:", children: [
+                  TextSpan(text: readModel.expectPower2.toString())
+                ])));
+          }),
+          Builder(builder: (contexxt) {
+            return TextButton(
+                onPressed: () {
+                  SmartDialog.showAttach(
+                      targetContext: contexxt,
+                      alignment: Alignment.bottomCenter,
+                      // animationType: SmartAnimationType.scale,
+                      scalePointBuilder: (selfSize) =>
+                          Offset(selfSize.width, 0),
+                      builder: (_) {
+                        return DropDownDialog(
+                          list: power.reversed.toList(),
+                          onPressed: (index) {
+                            readModel.expectEegative =
+                                power.reversed.toList()[index];
+                            readModel.chgUI();
+                          },
+                        );
+                      });
+                },
+                child: RichText(
+                    text: TextSpan(text: "负面期望值:", children: [
+                  TextSpan(text: watchModel.expectEegative.toString())
+                ])));
+          }),
         ],
       ),
     );
