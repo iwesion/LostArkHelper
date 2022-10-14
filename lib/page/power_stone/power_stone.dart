@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 18:00:26
- * @LastEditTime: 2022-10-11 14:40:02
+ * @LastEditTime: 2022-10-14 16:53:24
  * @Description: 
  */
 import 'dart:convert';
@@ -24,6 +24,13 @@ class _PowerStoneState extends State<PowerStone> {
   List titles = ["铭刻1", "铭刻2", "负面"];
   List<int> power = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
   List<int> stoneHole = [10, 9, 8, 7];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<PowerStoneProvider>().initView();
+  }
+
   @override
   Widget build(BuildContext context) {
     PowerStoneProvider watchModel = context.watch<PowerStoneProvider>();
