@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 16:59:39
- * @LastEditTime: 2022-10-15 16:19:03
+ * @LastEditTime: 2022-10-15 16:43:33
  * @Description: 
  */
 import 'dart:io';
@@ -12,6 +12,7 @@ import 'package:lost_ark/common/my_drawer.dart';
 import 'package:lost_ark/page/clown_bingo/clown_bingo_page.dart';
 import 'package:lost_ark/page/image_page/image_page.dart';
 import 'package:lost_ark/page/power_stone/power_stone.dart';
+import 'package:lost_ark/page/succubus/succubus.dart';
 import 'package:lost_ark/page/test_page/test_page.dart';
 import 'package:provider/provider.dart';
 
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       PageModel(title: "配铭刻", page: EngravedPage()),
       PageModel(title: "敲石头", page: PowerStone()),
       PageModel(title: "小丑bingo", page: ClownBingoPage()),
-      PageModel(title: "魅魔", page: ImagePage(img: "images/meimo/meimo_p1.png")),
+      PageModel(title: "魅魔", page: SuccubusPage()),
       PageModel(
           title: "小丑",
           page: ImagePage(img: "images/xiaochou/xiaochou_game4.png")),

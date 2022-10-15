@@ -1,14 +1,14 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-30 14:47:59
- * @LastEditTime: 2022-10-10 16:36:35
+ * @LastEditTime: 2022-10-15 17:21:00
  * @Description: 
  */
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 class DropDownDialog extends StatefulWidget {
-  List<int> list;
+  List list;
   int? i;
   double? width;
   void Function(int)? onPressed;
