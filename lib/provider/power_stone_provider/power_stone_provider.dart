@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-29 18:25:47
- * @LastEditTime: 2022-10-14 18:16:11
+ * @LastEditTime: 2022-10-15 16:16:24
  * @Description: 
  */
 import 'dart:math';
@@ -13,10 +13,14 @@ class Stone {
   List<bool> powerOne = [];
   List<bool> powerTwe = [];
   List<bool> negative = [];
+  int index = 5;
   Stone(
-      {required this.negative, required this.powerOne, required this.powerTwe});
+      {required this.negative,
+      required this.powerOne,
+      required this.powerTwe,
+      required this.index});
   static Stone init() {
-    return Stone(negative: [], powerOne: [], powerTwe: []);
+    return Stone(negative: [], powerOne: [], powerTwe: [], index: 5);
   }
 
   Stone copy() {
@@ -24,6 +28,7 @@ class Stone {
     s.powerOne = List.from(powerOne);
     s.powerTwe = List.from(powerTwe);
     s.negative = List.from(negative);
+    s.index = index;
     return s;
   }
 }
@@ -93,42 +98,53 @@ class PowerStoneProvider with ChangeNotifier, DiagnosticableTreeMixin {
 
   void chg({bool? powerOne, bool? powerTwe, bool? negative}) {
     if (powerOne != null && currentStone.powerOne.length < stoneGrid) {
-      currentStone.powerOne.add(powerOne);
-      clickList.add(currentStone.copy());
-      if (clickList.length > 0) {
+      if (clickList.isNotEmpty) {
         pIndex = powerOne ? pListSucc(pIndex) : pListFail(pIndex);
       } else {
         pIndex = pList.length - 1;
       }
+      currentStone.powerOne.add(powerOne);
+      currentStone.index = pIndex;
+      clickList.add(currentStone.copy());
+
       chgUI();
     }
     if (powerTwe != null && currentStone.powerTwe.length < stoneGrid) {
-      currentStone.powerTwe.add(powerTwe);
-      clickList.add(currentStone.copy());
-      if (clickList.length > 0) {
+      if (clickList.isNotEmpty) {
         pIndex = powerTwe ? pListSucc(pIndex) : pListFail(pIndex);
       } else {
         pIndex = pList.length - 1;
       }
+      currentStone.powerTwe.add(powerTwe);
+      currentStone.index = pIndex;
+      clickList.add(currentStone.copy());
+
       chgUI();
     }
     if (negative != null && currentStone.negative.length < stoneGrid) {
-      currentStone.negative.add(negative);
-      clickList.add(currentStone.copy());
-      if (clickList.length > 0) {
+      if (clickList.isNotEmpty) {
         pIndex = negative ? pListSucc(pIndex) : pListFail(pIndex);
       } else {
         pIndex = pList.length - 1;
       }
+
+      currentStone.index = pIndex;
+      currentStone.negative.add(negative);
+      clickList.add(currentStone.copy());
+
       chgUI();
     }
+    print("------pIndex=$pIndex");
+    _getTable();
+  }
 
+  void _getTable() {
     var na1 =
-        stoneGrid - (clickList.length > 0 ? clickList.last.powerOne.length : 0);
+        stoneGrid - (clickList.isNotEmpty ? clickList.last.powerOne.length : 0);
     var na2 =
-        stoneGrid - (clickList.length > 0 ? clickList.last.powerTwe.length : 0);
+        stoneGrid - (clickList.isNotEmpty ? clickList.last.powerTwe.length : 0);
     var nb =
-        stoneGrid - (clickList.length > 0 ? clickList.last.negative.length : 0);
+        stoneGrid - (clickList.isNotEmpty ? clickList.last.negative.length : 0);
 
     pTable = getPTable(na1, na2, nb, pIndex);
   }
@@ -292,6 +308,9 @@ class PowerStoneProvider with ChangeNotifier, DiagnosticableTreeMixin {
       clickList.removeLast();
       currentStone =
           clickList.isNotEmpty ? clickList.last.copy() : Stone.init();
+      print(currentStone.index);
+      pIndex = currentStone.index;
+      _getTable();
       chgUI();
     }
   }

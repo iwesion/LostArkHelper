@@ -1,7 +1,7 @@
 /*
  * @Author: wesion
  * @Date: 2022-09-17 16:59:39
- * @LastEditTime: 2022-10-08 16:52:15
+ * @LastEditTime: 2022-10-15 16:19:03
  * @Description: 
  */
 import 'dart:io';
@@ -55,7 +55,6 @@ class _HomePageState extends State<HomePage> {
                   Container(),
                   Text("Lost Ark"),
                   Container(
-                    color: Colors.black,
                     child: Row(
                       children: [
                         MinimizeWindowButton(),
